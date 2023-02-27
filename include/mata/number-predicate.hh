@@ -98,6 +98,27 @@ public:
             add(q);
     }
 
+    NumberPredicate(const NumberPredicate<Number>& rhs) = default;
+    NumberPredicate(NumberPredicate<Number>&& other) noexcept
+        : predicate{ std::move(other.predicate) }, elements{ std::move(other.elements) },
+          elements_are_exact{ other.elements_are_exact}, tracking_elements{ other.tracking_elements } {
+        other.elements = {};
+        other.predicate = {};
+    }
+
+    NumberPredicate<Number>& operator=(const NumberPredicate<Number>& rhs) = default;
+    NumberPredicate<Number>& operator=(NumberPredicate<Number>&& other) noexcept {
+        elements = std::move(other.elements);
+        predicate = std::move(other.predicate);
+        elements_are_exact = other.elements_are_exact;
+        tracking_elements = other.tracking_elements;
+
+        other.elements = {};
+        other.predicate = {};
+
+        return *this;
+    }
+
     template <class InputIterator>
     NumberPredicate(InputIterator first, InputIterator last)
     {

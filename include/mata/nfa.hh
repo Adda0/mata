@@ -460,7 +460,36 @@ public:
      * @brief Construct a new explicit NFA from other NFA.
      */
     Nfa(const Mata::Nfa::Nfa& other) = default;
+
+    Nfa(Mata::Nfa::Nfa&& other) noexcept
+        : delta{ std::move(other.delta) }, initial{ std::move(other.initial) }, final{ std::move(other.final) },
+          alphabet{ other.alphabet }, attributes{ std::move(other.attributes) },
+          m_num_of_requested_states{ other.m_num_of_requested_states } {
+        other.delta = {};
+        other.initial = {};
+        other.final = {};
+        other.attributes = {};
+        other.alphabet = nullptr;
+        other.m_num_of_requested_states = 0;
+    }
+
     Nfa& operator=(const Mata::Nfa::Nfa& other) = default;
+    Nfa& operator=(Mata::Nfa::Nfa&& other) noexcept {
+        if (this != &other) {
+            delta = std::move(other.delta);
+            initial = std::move(other.initial);
+            final = std::move(other.final);
+            alphabet = other.alphabet;
+            attributes = std::move(other.attributes);
+            m_num_of_requested_states = other.m_num_of_requested_states;
+            other.alphabet = nullptr;
+            other.delta = {};
+            other.initial = {};
+            other.final = {};
+            other.attributes = {};
+        }
+        return *this;
+    }
 
     /**
      * Clear transitions but keep the automata states.

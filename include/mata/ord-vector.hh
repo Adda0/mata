@@ -150,24 +150,25 @@ public:   // Public methods
         assert(vectorIsSorted());
     }
 
-    OrdVector(const OrdVector& rhs) :
-        vec_()
-    {
-        // Assertions
-        assert(rhs.vectorIsSorted());
-
-        if (&rhs != this)
-        {
-            vec_ = rhs.vec_;
-        }
-
-        // Assertions
-        assert(vectorIsSorted());
+    OrdVector(const OrdVector& rhs) = default;
+    OrdVector(OrdVector&& other) noexcept : vec_{ std::move(other.vec_) } {
+        other.vec_ = {};
     }
 
-    explicit OrdVector(const Key& key) :
-        vec_(1, key)
-    {
+    OrdVector& operator=(const OrdVector& other) {
+        if (&other != this) { vec_ = other.vec_; }
+        return *this;
+    }
+
+    OrdVector& operator=(OrdVector&& other) noexcept {
+        if (&other != this) {
+            vec_ = std::move(other.vec_);
+            other.vec_ = {};
+        }
+        return *this;
+    }
+
+    explicit OrdVector(const Key& key) : vec_(1, key) {
         // Assertions
         assert(vectorIsSorted());
     }
@@ -202,23 +203,6 @@ public:   // Public methods
         ord_vector.vec_.reserve(capacity);
         return ord_vector;
     }
-
-    OrdVector& operator=(const OrdVector& rhs)
-    {
-        // Assertions
-        assert(rhs.vectorIsSorted());
-
-        if (&rhs != this)
-        {
-            vec_ = rhs.vec_;
-        }
-
-        // Assertions
-        assert(vectorIsSorted());
-
-        return *this;
-    }
-
 
     void insert(iterator itr, const Key& x)
     {
