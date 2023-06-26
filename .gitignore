@@ -47,5 +47,16 @@ VERSION
 
 .DS_Store
 .vscode/
+.idea
 .venv
+bindings/python/dist
+bindings/python/libmata.egg-info
+bindings/python/tests/__pycache__
+bindings/python/.coverage
 bindings/python/libmata.cpp
+bindings/python/test.dot
+bindings/python/test.dot.pdf
+cmake-build-debug
+cmake-build-release
+tests-performance/pycobench.tasks
+.cache/clangd/index
