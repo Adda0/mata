@@ -3,6 +3,9 @@ name: Release
 permissions: write-all
 
 on:
+  push:
+    branches:
+      - test2
   pull_request:
     types:
       - closed
