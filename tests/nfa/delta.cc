@@ -219,7 +219,7 @@ TEST_CASE("Mata::Nfa::Delta iteration over transitions") {
         nfa.delta.add(2, 0, 1);
         nfa.delta.add(2, 0, 3);
 
-        Mata::Nfa::Delta::Transitions transitions{ nfa.delta.transitions() };
+        Mata::Nfa::Delta::Transitions transitions{ nfa.delta.transitions };
         iterated_transitions.clear();
         for (auto transitions_it{ transitions.begin() };
              transitions_it != transitions.end(); ++transitions_it) {
@@ -234,7 +234,7 @@ TEST_CASE("Mata::Nfa::Delta iteration over transitions") {
         CHECK(iterated_transitions == expected_transitions);
 
         iterated_transitions.clear();
-        for (const Transition& transition: nfa.delta.transitions()) { iterated_transitions.push_back(transition); }
+        for (const Transition& transition: nfa.delta.transitions) { iterated_transitions.push_back(transition); }
         CHECK(iterated_transitions == expected_transitions);
     }
 }
