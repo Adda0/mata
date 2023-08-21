@@ -72,3 +72,9 @@ tests-performance/jobs/corr-double-param-jobs.yaml
 tests-performance/jobs/corr-single-param-jobs.yaml
 tests-performance/jobs/corr-test-jobs.yaml
 tests-performance/src/utils/config.hh
+tests-integration/inputs/double-automata.input
+tests-integration/inputs/single-automata.input
+tests-integration/jobs/corr-double-param-jobs.yaml
+tests-integration/jobs/corr-single-param-jobs.yaml
+tests-integration/jobs/corr-test-jobs.yaml
+tests-integration/src/utils/config.hh
