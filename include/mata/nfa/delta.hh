@@ -162,6 +162,7 @@ public:
             bool operator==(const const_iterator& other) const;
         }; // class const_iterator.
 
+        Moves() = default;
         explicit Moves(const StatePost* state_post): state_post_{ state_post } {}
         Moves(Moves&&) = default;
         Moves(Moves&) = default;
@@ -388,6 +389,7 @@ public:
             bool operator!=(const const_iterator& other) const { return !(*this == other); };
         }; // class Transitions::const_iterator.
 
+        Transitions() = default;
         explicit Transitions(const Delta* delta): delta_{ delta } {}
         Transitions(Transitions&&) = default;
         Transitions(Transitions&) = default;
