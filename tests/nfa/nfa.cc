@@ -4,6 +4,7 @@
 
 #include "../3rdparty/catch.hpp"
 
+#include "mata/nfa/delta.hh"
 #include "nfa-util.hh"
 
 #include "mata/utils/sparse-set.hh"
@@ -972,7 +973,7 @@ TEST_CASE("Mata::Nfa::complement()")
         REQUIRE(is_in_lang(cmpl, Mata::Nfa::Run{{ alph["a"], alph["b"], alph["b"], alph["a"]},{}}));
         REQUIRE(cmpl.initial.size() == 1);
         REQUIRE(cmpl.final.size() == 1);
-        REQUIRE(cmpl.get_num_of_trans() == 4);
+        REQUIRE(cmpl.delta.num_of_transitions() == 4);
     }
 
     SECTION("non-empty automaton accepting a*b*")
@@ -998,7 +999,7 @@ TEST_CASE("Mata::Nfa::complement()")
 
         REQUIRE(cmpl.initial.size() == 1);
         REQUIRE(cmpl.final.size() == 1);
-        REQUIRE(cmpl.get_num_of_trans() == 6);
+        REQUIRE(cmpl.delta.num_of_transitions() == 6);
     }
 
     SECTION("empty automaton, empty alphabet, minimization")
@@ -1675,7 +1676,7 @@ TEST_CASE("Mata::Nfa::revert()")
         REQUIRE(result.initial[2]);
         REQUIRE(result.final[1]);
         REQUIRE(result.delta.contains(2, 'a', 1));
-        REQUIRE(result.delta.size() == aut.delta.size());
+        REQUIRE(result.delta.num_of_transitions() == aut.delta.num_of_transitions());
     }
 
     SECTION("bigger automaton")
@@ -1716,7 +1717,7 @@ TEST_CASE("Mata::Nfa::revert()")
         CHECK(res.initial[5]);
         CHECK(res.final[1]);
         CHECK(res.final[3]);
-        CHECK(res.get_num_of_trans() == 15);
+        CHECK(res.delta.num_of_transitions() == 15);
         CHECK(res.delta.contains(5, 'a', 5));
         CHECK(res.delta.contains(5, 'a', 7));
         CHECK(res.delta.contains(9, 'a', 9));
@@ -1741,7 +1742,7 @@ TEST_CASE("Mata::Nfa::revert()")
         CHECK(res.initial[2]);
         CHECK(res.initial[12]);
         CHECK(res.final[4]);
-        CHECK(res.get_num_of_trans() == 12);
+        CHECK(res.delta.num_of_transitions() == 12);
         CHECK(res.delta.contains(8, 'a', 4));
         CHECK(res.delta.contains(8, 'c', 4));
         CHECK(res.delta.contains(4, 'b', 8));
@@ -2088,7 +2089,7 @@ TEST_CASE("Mata::Nfa::reduce_size_by_simulation()")
         CHECK(result.size() == 3);
         CHECK(result.initial == SparseSet<Mata::Nfa::State>{ 0, 1 });
         CHECK(result.final == SparseSet<Mata::Nfa::State>{ 2 });
-        CHECK(result.delta.size() == 6);
+        CHECK(result.delta.num_of_transitions() == 6);
         CHECK(result.delta.contains(state_renaming[0], 'a', state_renaming[2]));
         CHECK(result.delta.contains(state_renaming[0], 'a', state_renaming[1]));
         CHECK(result.delta.contains(state_renaming[1], 'a', state_renaming[1]));
@@ -2245,7 +2246,7 @@ TEST_CASE("Mata::Nfa::get_num_of_trans()")
 {
     Nfa aut{20};
     FILL_WITH_AUT_A(aut);
-    REQUIRE(aut.get_num_of_trans() == 15);
+    REQUIRE(aut.delta.num_of_transitions() == 15);
 }
 
 TEST_CASE("Mata::Nfa::get_one_letter_aut()")
@@ -2257,7 +2258,7 @@ TEST_CASE("Mata::Nfa::get_one_letter_aut()")
     Nfa digraph{aut.get_one_letter_aut() };
 
     REQUIRE(digraph.size() == aut.size());
-    REQUIRE(digraph.get_num_of_trans() == 12);
+    REQUIRE(digraph.delta.num_of_transitions() == 12);
     REQUIRE(digraph.delta.contains(1, abstract_symbol, 10));
     REQUIRE(digraph.delta.contains(10, abstract_symbol, 7));
     REQUIRE(!digraph.delta.contains(10, 'a', 7));
@@ -2466,7 +2467,7 @@ TEST_CASE("Mata::Nfa::delta.operator[]")
 {
     Nfa aut{20};
     FILL_WITH_AUT_A(aut);
-    REQUIRE(aut.get_num_of_trans() == 15);
+    REQUIRE(aut.delta.num_of_transitions() == 15);
     aut.delta[25];
     REQUIRE(aut.size() == 20);
 
