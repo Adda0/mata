@@ -8,6 +8,7 @@
 #include "mata/nfa/nfa.hh"
 
 #include "../3rdparty/catch.hpp"
+#include <vector>
 
 using namespace Mata::Nfa;
 
@@ -147,6 +148,9 @@ TEST_CASE("Mata::Nfa::StatePost iteration over moves") {
         for (const Move& move: state_post.moves()) { iterated_moves.push_back(move); }
         CHECK(iterated_moves == expected_moves);
 
+        StatePost::Moves epsilon_moves{ state_post.epsilon_moves() };
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() }.empty());
+
 
         state_post = nfa.delta.state_post(1);
         moves = state_post.moves();
@@ -161,6 +165,8 @@ TEST_CASE("Mata::Nfa::StatePost iteration over moves") {
         iterated_moves.clear();
         for (const Move& move: state_post.moves()) { iterated_moves.push_back(move); }
         CHECK(iterated_moves == expected_moves);
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() }.empty());
 
         state_post = nfa.delta.state_post(2);
         moves = state_post.moves();
@@ -175,6 +181,8 @@ TEST_CASE("Mata::Nfa::StatePost iteration over moves") {
         iterated_moves.clear();
         for (const Move& move: state_post.moves()) { iterated_moves.push_back(move); }
         CHECK(iterated_moves == expected_moves);
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() }.empty());
 
         state_post = nfa.delta.state_post(3);
         moves = state_post.moves();
@@ -188,6 +196,8 @@ TEST_CASE("Mata::Nfa::StatePost iteration over moves") {
         iterated_moves.clear();
         for (const Move& move: state_post.moves()) { iterated_moves.push_back(move); }
         CHECK(iterated_moves.empty());
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() }.empty());
 
         state_post = nfa.delta.state_post(4);
         moves = state_post.moves();
@@ -201,6 +211,22 @@ TEST_CASE("Mata::Nfa::StatePost iteration over moves") {
         iterated_moves.clear();
         for (const Move& move: state_post.moves()) { iterated_moves.push_back(move); }
         CHECK(iterated_moves.empty());
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() }.empty());
+
+
+        nfa.delta.add(0, EPSILON, 2);
+        state_post = nfa.delta.state_post(0);
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() } == std::vector<Move>{ { EPSILON, 2 } });
+        nfa.delta.add(1, EPSILON, 3);
+        state_post = nfa.delta.state_post(1);
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() } == std::vector<Move>{ { EPSILON, 3 } });
+        nfa.delta.add(4, EPSILON, 4);
+        state_post = nfa.delta.state_post(4);
+        epsilon_moves = state_post.epsilon_moves();
+        CHECK(std::vector<Move>{ epsilon_moves.begin(), epsilon_moves.end() } == std::vector<Move>{ { EPSILON, 4 } });
     }
 }
 

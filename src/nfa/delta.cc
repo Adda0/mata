@@ -365,18 +365,48 @@ bool Delta::operator==(const Delta& other) const {
     return other_transitions_it == other_transitions_end;
 }
 
-StatePost::Moves::const_iterator::const_iterator(const StatePost* state_post)
-    : state_post_{ state_post } {
-    if (!state_post_->empty()) {
-        state_post_it_ = state_post_->begin();
-        symbol_post_it_ = state_post_it_->targets.begin();
-        move_.symbol = state_post_it_->symbol;
-        move_.target = *symbol_post_it_;
+StatePost::Moves::const_iterator::const_iterator(const StatePost& state_post): state_post_{ &state_post } {
+    if (state_post_->empty()) { // No transition found, 'state_post' is an empty state post.
+        is_end_ = true;
         return;
     }
+    state_post_it_ = state_post_->begin();
+    symbol_post_it_ = state_post_it_->targets.begin();
+    move_.symbol = state_post_it_->symbol;
+    move_.target = *symbol_post_it_;
+}
 
-    // No transition found, 'state_post' is an empty state post.
-    is_end_ = true;
+StatePost::Moves::const_iterator::const_iterator(
+    const StatePost& state_post, const Symbol first_symbol, const Symbol last_symbol,
+    const Moves::FirstSymbolLookupDiretion first_symbol_lookup_direction)
+    : state_post_{ &state_post }, last_symbol_{ last_symbol } {
+    if (state_post_->empty()) {
+        is_end_ = true;
+        return;
+    }
+    const StatePost::const_iterator state_post_begin{ state_post_->begin() };
+    const StatePost::const_iterator state_post_end{ state_post_->end() };
+    if (first_symbol_lookup_direction == Moves::FirstSymbolLookupDiretion::Forward) {
+        state_post_it_ = state_post_begin;
+        while (state_post_it_ != state_post_end && first_symbol > state_post_it_->symbol) { ++state_post_it_; }
+        if (state_post_it_ == state_post_end) {
+            is_end_ = true;
+            return;
+        }
+    } else { // first_symbol_lookup_direction == Moves::FirstSymbolLookupDiretion::Backward.
+        auto previous_state_post_it = std::prev(state_post_end);
+        while (previous_state_post_it != state_post_begin && last_symbol < previous_state_post_it->symbol) {
+            --previous_state_post_it;
+        }
+        if (previous_state_post_it->symbol < first_symbol) {
+            is_end_ = true;
+            return;
+        }
+        state_post_it_ = previous_state_post_it;
+    }
+    symbol_post_it_ = state_post_it_->targets.begin();
+    move_.symbol = state_post_it_->symbol;
+    move_.target = *symbol_post_it_;
 }
 
 StatePost::Moves::const_iterator& StatePost::Moves::const_iterator::operator++() {
@@ -386,14 +416,23 @@ StatePost::Moves::const_iterator& StatePost::Moves::const_iterator::operator++()
         return *this;
     }
 
-    ++state_post_it_;
-    if (state_post_it_ != state_post_->cend()) {
-        symbol_post_it_ = state_post_it_->targets.begin();
-        move_.symbol = state_post_it_->symbol;
-        move_.target = *symbol_post_it_;
+    if (state_post_it_->symbol == last_symbol_) {
+        // Last symbol symbol post was reached and fully iterated over. We would now iterate to the next symbol, but
+        //  that would already be over the iteration end specified by 'last_symbol_'.
+        is_end_ = true;
         return *this;
     }
-    is_end_ = true;
+    // Iterate over to the next symbol post, which can be either an end iterator, or symbol post whose
+    //  symbol <= last_symbol_.
+    ++state_post_it_;
+    if (state_post_it_ == state_post_->cend()) {
+        is_end_ = true;
+        return *this;
+    }
+    // The current symbol post is valid (not end iterator and symbol <= last_symbol_).
+    symbol_post_it_ = state_post_it_->targets.begin();
+    move_.symbol = state_post_it_->symbol;
+    move_.target = *symbol_post_it_;
     return *this;
 }
 
@@ -418,4 +457,32 @@ size_t StatePost::num_of_moves() const {
         counter += symbol_post.size();
     }
     return counter;
+}
+
+StatePost::Moves& StatePost::Moves::operator=(StatePost::Moves&& other) noexcept {
+    if (&other != this) {
+        state_post_ = other.state_post_;
+        first_symbol_ = other.first_symbol_;
+        last_symbol_ = other.last_symbol_;
+        first_symbol_lookup_direction_ = other.first_symbol_lookup_direction_;
+    }
+    return *this;
+}
+
+StatePost::Moves& StatePost::Moves::operator=(const Moves& other) noexcept {
+    if (&other != this) {
+        state_post_ = other.state_post_;
+        first_symbol_ = other.first_symbol_;
+        last_symbol_ = other.last_symbol_;
+        first_symbol_lookup_direction_ = other.first_symbol_lookup_direction_;
+    }
+    return *this;
+}
+
+StatePost::Moves StatePost::epsilon_moves(const Symbol first_epsilon) const {
+    return { *this, first_epsilon, Limits::max_symbol, Moves::FirstSymbolLookupDiretion::Backward};
+}
+
+StatePost::Moves StatePost::symbol_moves(const Symbol last_symbol) const {
+    return { *this, Limits::min_symbol, last_symbol };
 }
