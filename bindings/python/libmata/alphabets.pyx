@@ -1,6 +1,6 @@
 cimport libmata.alphabets as alph
 
-from libmata.alphabets cimport CAlphabet, CIntAlphabet, COnTheFlyAlphabet
+from libmata.alphabets cimport CAlphabet, COnTheFlyAlphabet
 from libmata.nfa.nfa cimport State
 
 cdef class Alphabet:
@@ -109,41 +109,6 @@ cdef class OnTheFlyAlphabet(Alphabet):
         """
         cdef COrdVector[Symbol] symbols = self.thisptr.get_alphabet_symbols()
         return {s for s in symbols}
-
-    cdef CAlphabet* as_base(self):
-        """Retypes the alphabet to its base class
-
-        :return: alphabet as CAlphabet*
-        """
-        return <CAlphabet*> self.thisptr
-
-
-cdef class IntAlphabet(Alphabet):
-    """IntAlphabet represents integer alphabet that directly maps integer string to their values."""
-
-    cdef CIntAlphabet *thisptr
-
-    def __cinit__(self):
-        self.thisptr = new CIntAlphabet()
-
-    def __dealloc__(self):
-        del self.thisptr
-
-    def translate_symbol(self, str symbol):
-        """Translates symbol to the position of the seen values
-
-        :param str symbol: translated symbol
-        :return: order of the symbol as was seen during the construction
-        """
-        return self.thisptr.translate_symb(symbol.encode('utf-8'))
-
-    def reverse_translate_symbol(self, Symbol symbol) -> str:
-        """Translate internal symbol value to the original symbol name.
-
-        :param Symbol symbol: Internal symbol value to be translated.
-        :return str: Original symbol string name.
-        """
-        return self.thisptr.reverse_translate_symbol(symbol).decode('utf-8')
 
     cdef CAlphabet* as_base(self):
         """Retypes the alphabet to its base class

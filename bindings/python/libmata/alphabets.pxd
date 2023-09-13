@@ -14,9 +14,6 @@ cdef extern from "mata/alphabet.hh" namespace "mata":
         Symbol translate_symb(string)
         string reverse_translate_symbol(Symbol)
 
-    cdef cppclass CIntAlphabet "mata::IntAlphabet" (CAlphabet):
-        COrdVector[Symbol] get_alphabet_symbols()
-
     cdef cppclass COnTheFlyAlphabet "mata::OnTheFlyAlphabet" (CAlphabet):
         ctypedef umap[string, Symbol] StringToSymbolMap
 

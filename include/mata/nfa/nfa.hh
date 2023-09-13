@@ -272,7 +272,7 @@ public:
     /**
      * @brief Prints the automaton in mata format
      *
-     * If you need to parse the automaton again, use IntAlphabet in construct()
+     * If you need to parse the automaton again, use @c nullptr in construct() in place of an alphabet.
      *
      * @return automaton in mata format
      * TODO handle alphabet of the automaton, currently we print the exact value of the symbols
@@ -281,7 +281,7 @@ public:
     /**
      * @brief Prints the automaton to the output stream in mata format
      *
-     * If you need to parse the automaton again, use IntAlphabet in construct()
+     * If you need to parse the automaton again, use @c nullptr in construct() in place of an alphabet.
      *
      * TODO handle alphabet of the automaton, currently we print the exact value of the symbols
      */

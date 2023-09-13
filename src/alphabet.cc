@@ -118,16 +118,6 @@ std::ostream &std::operator<<(std::ostream &os, const mata::Alphabet& alphabet) 
     return os << std::to_string(alphabet);
 }
 
-Symbol mata::IntAlphabet::translate_symb(const std::string& symb) {
-    Symbol symbol;
-    std::istringstream stream{ symb };
-    stream >> symbol;
-    if (stream.fail() || !stream.eof()) {
-        throw std::runtime_error("Cannot translate string '" + symb + "' to symbol.");
-    }
-    return symbol;
-}
-
 std::string mata::EnumAlphabet::reverse_translate_symbol(const Symbol symbol) const {
     if (symbols_.find(symbol) == symbols_.end()) {
         throw std::runtime_error("Symbol '" + std::to_string(symbol) + "' is out of range of enumeration.");

@@ -10,7 +10,6 @@
 
 using namespace mata::nfa;
 using Symbol = mata::Symbol;
-using IntAlphabet = mata::IntAlphabet;
 using OnTheFlyAlphabet = mata::OnTheFlyAlphabet;
 
 using Word = std::vector<Symbol>;

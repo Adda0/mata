@@ -99,74 +99,11 @@ protected:
 }; // class Alphabet.
 
 /**
-* Direct alphabet (also identity alphabet or integer alphabet) using integers as symbols.
-*
-* This alphabet presumes that all integers are valid symbols.
-* Therefore, calling member functions get_complement() and get_alphabet_symbols() makes no sense in this context and the methods
-*  will throw exceptions warning about the inappropriate use of IntAlphabet. If one needs these functions, they should
-*  use OnTheFlyAlphabet instead of IntAlphabet.
-*/
-class IntAlphabet : public Alphabet {
-public:
-    IntAlphabet() : alphabet_instance(IntAlphabetSingleton::get()) {}
-
-    Symbol translate_symb(const std::string &symb) override;
-
-    std::string reverse_translate_symbol(Symbol symbol) const override { return std::to_string(symbol); }
-
-    utils::OrdVector<Symbol> get_alphabet_symbols() const override {
-        throw std::runtime_error("Nonsensical use of get_alphabet_symbols() on IntAlphabet.");
-    }
-
-    utils::OrdVector<Symbol> get_complement(const utils::OrdVector<Symbol>& symbols) const override {
-        (void) symbols;
-        throw std::runtime_error("Nonsensical use of get_complement() on IntAlphabet.");
-    }
-
-    IntAlphabet(const IntAlphabet&) = default;
-
-    IntAlphabet& operator=(const IntAlphabet& int_alphabet) = delete;
-
-protected:
-    const void* address() const override { return &alphabet_instance; }
-
-private:
-    /**
-     * Singleton class implementing integer alphabet_instance for class IntAlphabet.
-     *
-     * Users have to use IntAlphabet instead which provides interface identical to other alphabets and can be used in
-     *  places where an instance of the abstract class Alphabet is required.
-     */
-    class IntAlphabetSingleton {
-    public:
-        static IntAlphabetSingleton& get() {
-            static IntAlphabetSingleton alphabet;
-            return alphabet;
-        }
-
-        IntAlphabetSingleton(IntAlphabetSingleton&) = delete;
-        IntAlphabetSingleton(IntAlphabetSingleton&&) = delete;
-        IntAlphabetSingleton& operator=(const IntAlphabetSingleton&) = delete;
-        IntAlphabetSingleton& operator=(IntAlphabetSingleton&&) = delete;
-
-        ~IntAlphabetSingleton() = default;
-
-    protected:
-        IntAlphabetSingleton() = default;
-    }; // class IntAlphabetSingleton.
-
-    IntAlphabetSingleton& alphabet_instance;
-}; // class IntAlphabet.
-
-/**
  * Enumerated alphabet using a set of integers as symbols maintaining a set of specified symbols.
  *
  * @c EnumAlphabet is a version of direct (identity) alphabet (does not give names to symbols, their name is their
- *  integer value directly). However, unlike @c IntAlphabet, @c EnumAlphabet maintains an ordered set of symbols in
- *  the alphabet.
- *
- * Therefore, calling member functions @c get_complement() and @c get_alphabet_symbols() makes sense in the context
- *  of @c EnumAlphabet and the functions give the expected results.
+ *  integer value directly). However, unlike the default direct (identity) alphabet (represented as @c nullptr),
+ *  @c EnumAlphabet maintains an ordered set of symbols in the alphabet.
  *
  *  Example:
  *  ```cpp
