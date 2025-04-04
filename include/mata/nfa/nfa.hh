@@ -138,12 +138,12 @@ public:
     /**
      * Unify initial states into a single new initial state.
      */
-    void unify_initial();
+    Nfa& unify_initial(bool force_new_state = false);
 
     /**
      * Unify final states into a single new final state.
      */
-    void unify_final();
+    Nfa& unify_final(bool force_new_state = false);
 
     /**
      * Swap final and non-final states in-place.
