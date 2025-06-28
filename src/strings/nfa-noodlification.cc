@@ -149,6 +149,7 @@ void seg_nfa::segs_one_initial_final(
     for (auto iter = segments.begin(); iter != segments.end(); ++iter) {
         if (iter == segments.begin()) { // first segment will always have all initial states in noodles
             for (const State final_state: iter->final) {
+                // TODO HERE.
                 Nfa segment_one_final = *iter;
                 segment_one_final.final = {final_state };
                 segment_one_final = reduce(segment_one_final.trim());
@@ -170,9 +171,12 @@ void seg_nfa::segs_one_initial_final(
         } else { // the segments in-between
             for (const State init_state: iter->initial) {
                 for (const State final_state: iter->final) {
-                    Nfa segment_one_init_final = *iter;
-                    segment_one_init_final.initial = {init_state };
-                    segment_one_init_final.final = {final_state };
+                    // Nfa segment_one_init_final = *iter;
+                    Nfa segment_one_init_final = trimmed(*iter, nullptr,
+                                                         std::make_optional(utils::SparseSet<State>{init_state}),
+                                                         std::make_optional(utils::SparseSet<State>{final_state}));
+                    // segment_one_init_final.initial = {init_state };
+                    // segment_one_init_final.final = {final_state };
                     segment_one_init_final = reduce(segment_one_init_final.trim());
                     if (segment_one_init_final.num_of_states() > 0 || include_empty) {
                         out[std::make_pair(init_state, final_state)] = std::make_shared<Nfa>(segment_one_init_final);
