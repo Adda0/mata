@@ -62,6 +62,8 @@ jobs:
 
       - name: Install Python Dependencies
         run: |
+          sudo apt -qq update
+          sudo apt -qq install -y python3-breathe
           python -m pip install --upgrade pip
           make -C doc init
 
