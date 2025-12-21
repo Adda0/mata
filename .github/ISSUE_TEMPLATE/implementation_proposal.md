@@ -1,6 +1,6 @@
 ---
 name: Implementation proposal
-description: Propose how do you plan to implement a feature or fix before starting work.
+about: Propose how do you plan to implement a feature or fix before starting work.
 title: "[IP]: "
 type: feature
 labels: ""
